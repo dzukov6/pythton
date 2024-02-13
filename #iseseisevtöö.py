@@ -69,8 +69,19 @@
 # 	kood kommenteeritud - 1p
 
 # import random
+# rahakott = 100
+# panus = 10
 
 # print("taringumang: voistle selle boti vastu")
+# while rahakott >= panus:
+# print(f"sul on {rahakott} raha")
+#     print(f"iga mängu panus on {panus} raha")
+#     vastus = input("kas soovid mängida jah voi ei? ")
+
+#     if vastus = jah:
+#         break
+
+#     rahakott = rahakott - panus
 # taring1 = random.randint(1, 6)
 # taring2 = random.randint(1, 6)
 # botitaring1 = random.randint(1, 6)
@@ -83,6 +94,7 @@
 # print(f"su taringute summa: {summa}")
 # print(f"boti taringute summa: {botisumma}")
 # if summa > botisumma:
+# rahakott = rahakott + panus
 #     print("congrats, sa voitsid ja said moni")
 # elif summa < botisumma:
 #     print("oled ise nuud bot, sa kaotasid. bot ise voitsis")
@@ -138,11 +150,8 @@
 #     else:
 #         print("ei, vali 1 või 2")
 
-# if __name__ == "__main__":
-#     see()
 
-
-
+#14
 # Palkade võrdlus - Loo palk.txt fail töötajate nime, soo ja palganumbriga (10 töötajat).
 # 	Koosta programm, mis analüüsib kas firmas toimub diskrimineerimist soo järgi. Selleks võrdle omavahel meeste ja naiste palkade keskmiseid, samuti meeste ja naiste kõige kõrgemat palka. Programm peab tegema otsuse.
 
@@ -159,19 +168,14 @@
 # 	Karmen Kass n 2120
 # 	Kornelius Koer m 2250
 
-
-f = open("palk.txt", "r")
-for x in f:
-  print(x)
+# file1 = open(r"C:\Users\dzukov\Desktop\python\pythton\palk.txt","r")
+# file1.readlines()
 
 
 
-
-
-
-
-
-
-
+#16
+# 16. TÃ¤ringud
+# 	Kasutaja vÃµistleb kahe tÃ¤ringuga arvuti vastu. Kasutaja teeb pakkumise ning suurima tÃ¤ringupunktisumma vÃµitja saab laual oleva raha endale juurde. MÃ¤ng kestab kuni kummalgi on raha otsas.
+# 	(Vihjed: kÃ¼si kasutajalt nime, kuva pidevalt konto seisu ja tÃ¤ringuviskeid, kasutajate raha hulga mÃ¤ngu alguses mÃ¤Ã¤rad sina)
 
 
