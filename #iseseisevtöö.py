@@ -168,8 +168,22 @@
 # 	Karmen Kass n 2120
 # 	Kornelius Koer m 2250
 
-# file1 = open(r"C:\Users\dzukov\Desktop\python\pythton\palk.txt","r")
-# file1.readlines()
+# import math
+
+# mhm = []
+
+# with open(r'C:\Users\dzukov\Desktop\python\pythton\palk.txt') as f:
+#     for line in f:
+#         vaike = min(mhm)
+#         suur = max(mhm)
+#         keskmine = sum(mhm) / len(mhm)
+#         print("suur:", suur)
+#         print("vaike:", vaike)
+#         print("kesk:", keskmine)
+
+   
+
+
 
 
 
@@ -179,3 +193,37 @@
 # 	(Vihjed: kÃ¼si kasutajalt nime, kuva pidevalt konto seisu ja tÃ¤ringuviskeid, kasutajate raha hulga mÃ¤ngu alguses mÃ¤Ã¤rad sina)
 
 
+# import random
+
+# rahakott = 100
+# panus = 10
+
+# print("taringumang: voistle selle boti vastu")
+# while rahakott >= panus:
+#     print(f"sul on {rahakott} raha")
+#     print(f"iga mängu panus on {panus} raha")
+#     vastus = input("kas soovid mängida jah voi ei? ")
+
+#     if vastus == 'ei':
+#         break
+
+#     rahakott = rahakott - panus
+#     taring1 = random.randint(1, 6)
+#     taring2 = random.randint(1, 6)
+#     botitaring1 = random.randint(1, 6)
+#     botitaring2 = random.randint(1, 6)
+#     print(f"su taringud: {taring1}, {taring2}")
+#     arvamus = int(input("arva ara: "))
+#     summa = taring1 + taring2
+#     botisumma = botitaring1 + botitaring2
+#     print(f"boti taringud: {botitaring1}, {botitaring2}")
+#     print(f"su taringute summa: {summa}")
+#     print(f"boti taringute summa: {botisumma}")
+
+#     if summa > botisumma:
+#         rahakott = rahakott + panus
+#         print("congrats, sa voitsid ja said moni")
+#     elif summa < botisumma:
+#         print("oled ise nuud bot, sa kaotasid. bot ise voitsis")
+#     else:
+#         print("viik, olete molemad botid")
