@@ -1,102 +1,136 @@
 import tkinter as tk
 from tkinter import messagebox
+import csv
 
-class ArveldusRakendus:
+class ArveteRakendus:
     def __init__(self, root):
-        # Algatame rakenduse
         self.root = root
-        self.root.title("Teenusepõhine Arveldussüsteem")  # Määrame põhiakna pealkirja
-        self.teenused = {}  # Sõnastik teenuste salvestamiseks
-        self.arved = {}     # Sõnastik arvete salvestamiseks
-        
-        # Loome nupud teenuste lisamiseks ja arve koostamiseks
-        self.lisa_teenus_nupp = tk.Button(self.root, text="Lisa Teenus", command=self.lisa_teenus)
-        self.lisa_teenus_nupp.pack()
-        
-        self.koosta_arve_nupp = tk.Button(self.root, text="Koosta Arve", command=self.koosta_arve)
+        self.root.title("Arvete Haldamine")
+
+        # Andmestruktuurid
+        self.teenused = []
+        self.arved = []
+
+        # Lae teenused ja arved failist
+        self.lae_andmed()
+
+        # Teenuste raam
+        self.teenuste_raam = tk.LabelFrame(root, text="Teenuste Haldamine")
+        self.teenuste_raam.pack(padx=10, pady=10, fill="both", expand="yes")
+
+        # Teenuste loendi loomine
+        self.teenduste_loend = tk.Listbox(self.teenuste_raam, width=50)
+        self.teenduste_loend.pack(side="left", fill="both", expand="yes")
+
+        # Väljad teenuse lisamiseks
+        self.nimi_sisend = tk.Entry(self.teenuste_raam)
+        self.nimi_sisend.pack()
+        self.hind_sisend = tk.Entry(self.teenuste_raam)
+        self.hind_sisend.pack()
+
+        # Nupud teenuste lisamiseks, muutmiseks ja kustutamiseks
+        self.lisa_nupp = tk.Button(self.teenuste_raam, text="Lisa Teenus", command=self.lisa_teenus)
+        self.lisa_nupp.pack(side="left", padx=5)
+        self.muuda_nupp = tk.Button(self.teenuste_raam, text="Muuda Teenust", command=self.muuda_teenust)
+        self.muuda_nupp.pack(side="left", padx=5)
+        self.kustuta_nupp = tk.Button(self.teenuste_raam, text="Kustuta Teenus", command=self.kustuta_teenus)
+        self.kustuta_nupp.pack(side="left", padx=5)
+
+        # Arvete raam
+        self.arvete_raam = tk.LabelFrame(root, text="Arvete Haldamine")
+        self.arvete_raam.pack(padx=10, pady=10, fill="both", expand="yes")
+
+        # Arvete loendi loomine
+        self.arvete_loend = tk.Listbox(self.arvete_raam, width=50)
+        self.arvete_loend.pack(side="left", fill="both", expand="yes")
+
+        # Nupp arve koostamiseks
+        self.koosta_arve_nupp = tk.Button(self.arvete_raam, text="Koosta Arve", command=self.koosta_arve)
         self.koosta_arve_nupp.pack()
 
-        # Laeme olemasolevad andmed
-        self.loe_andmed()
-        
+        # Lae teenused ja arved
+        self.uuenda_teenuste_loend()
+        self.uuenda_arvete_loend()
+
     def lisa_teenus(self):
-        # Meetod teenuse lisamiseks
-        lisa_aken = tk.Toplevel(self.root)  # Loome uue akna teenuse lisamiseks
-        lisa_aken.title("Lisa Teenus")      # Määrame akna pealkirja
-        
-        # Sildid ja tekstiväljad teenuse kirjelduse ja hinna sisestamiseks
-        tk.Label(lisa_aken, text="Teenuse Kirjeldus:").pack()
-        kirjeldus_sisend = tk.Entry(lisa_aken)
-        kirjeldus_sisend.pack()
-        
-        tk.Label(lisa_aken, text="Teenuse Hind:").pack()
-        hind_sisend = tk.Entry(lisa_aken)
-        hind_sisend.pack()
-        
-        # Nupp teenuse salvestamiseks
-        tk.Button(lisa_aken, text="Lisa", command=lambda: self.salvesta_teenus(kirjeldus_sisend.get(), hind_sisend.get())).pack()
-        
-    def salvesta_teenus(self, kirjeldus, hind):
-        # Meetod teenuse salvestamiseks
-        if kirjeldus and hind:  # Kontrollime, kas nii kirjeldus kui ka hind on sisestatud
-            teenus_id = max(self.teenused.keys(), default=0) + 1  # Genereerime unikaalse ID teenusele
-            self.teenused[teenus_id] = {"kirjeldus": kirjeldus, "hind": hind}  # Salvestame teenuse sõnastikku
-            self.salvesta_andmed()  # Uuendame andmefaili
-            messagebox.showinfo("Teenus Lisatud", "Teenus on edukalt lisatud!")  # Näitame teavitust edukast salvestamisest
+        nimi = self.nimi_sisend.get()
+        hind = self.hind_sisend.get()
+        if nimi and hind:
+            self.teenused.append({"nimi": nimi, "hind": hind})
+            self.uuenda_teenuste_loend()
+            self.nimi_sisend.delete(0, tk.END)
+            self.hind_sisend.delete(0, tk.END)
+            self.salvesta_andmed()
         else:
-            messagebox.showerror("Viga", "Palun täitke kõik väljad!")  # Näitame veateadet, kui mõni väli on täitmata
-    
+            messagebox.showwarning("Hoiatus", "Palun täida kõik väljad!")
+
+    def muuda_teenust(self):
+        valitud_indeks = self.teenduste_loend.curselection()
+        if valitud_indeks:
+            valitud_indeks = int(valitud_indeks[0])
+            nimi = self.nimi_sisend.get()
+            hind = self.hind_sisend.get()
+            if nimi and hind:
+                self.teenused[valitud_indeks] = {"nimi": nimi, "hind": hind}
+                self.uuenda_teenuste_loend()
+                self.nimi_sisend.delete(0, tk.END)
+                self.hind_sisend.delete(0, tk.END)
+                self.salvesta_andmed()
+            else:
+                messagebox.showwarning("Hoiatus", "Palun täida kõik väljad!")
+        else:
+            messagebox.showwarning("Hoiatus", "Palun vali teenus!")
+
+    def kustuta_teenus(self):
+        valitud_indeks = self.teenduste_loend.curselection()
+        if valitud_indeks:
+            valitud_indeks = int(valitud_indeks[0])
+            del self.teenused[valitud_indeks]
+            self.uuenda_teenuste_loend()
+            self.salvesta_andmed()
+        else:
+            messagebox.showwarning("Hoiatus", "Palun vali teenus!")
+
     def koosta_arve(self):
-        # Meetod arve koostamiseks
-        valitud_teenused = []
-        for teenus_id, teenus in self.teenused.items():
-            valitud_teenused.append(f"{teenus_id}: {teenus['kirjeldus']} - {teenus['hind']} EUR")
-        
-        koosta_arve_aken = tk.Toplevel(self.root)  # Loome uue akna arve koostamiseks
-        koosta_arve_aken.title("Koosta Arve")     # Määrame akna pealkirja
-        
-        # Listbox valitud teenuste valimiseks
-        tk.Label(koosta_arve_aken, text="Vali Teenused:").pack()
-        teenuste_valik = tk.Listbox(koosta_arve_aken, selectmode=tk.MULTIPLE)
-        for teenus in valitud_teenused:
-            teenuste_valik.insert(tk.END, teenus)
-        teenuste_valik.pack()
-        
-        # Nupp arve koostamiseks
-        tk.Button(koosta_arve_aken, text="Koosta", command=lambda: self.salvesta_arve(teenuste_valik.curselection())).pack()
-    
-    def salvesta_arve(self, valitud_teenused):
-        # Meetod arve salvestamiseks
-        if valitud_teenused:  # Kontrollime, kas vähemalt üks teenus on valitud
-            teenused_arvele = []
-            summa = 0
-            for index in valitud_teenused:
-                teenus_id = int(index) + 1
-                teenus = self.teenused[teenus_id]
-                summa += float(teenus["hind"])
-                teenused_arvele.append(teenus)
-            self.arved[max(self.arved.keys(), default=0) + 1] = {"teenused": teenused_arvele, "summa": summa}  # Salvestame arve
-            messagebox.showinfo("Arve Koostatud", f"Arve summa: {summa} EUR")  # Näitame kogusummat
+        valitud_indeksid = self.teenduste_loend.curselection()
+        if valitud_indeksid:
+            teenused_arvele = [self.teenused[int(i)] for i in valitud_indeksid]
+            kogusumma = sum(float(teenus["hind"]) for teenus in teenused_arvele)
+            self.arved.append({"teenused": teenused_arvele, "summa": kogusumma})
+            self.uuenda_arvete_loend()
+            self.salvesta_andmed()
         else:
-            messagebox.showerror("Viga", "Valige vähemalt üks teenus!")  # Näitame veateadet, kui ühtegi teenust ei ole valitud
-    
+            messagebox.showwarning("Hoiatus", "Palun vali vähemalt üks teenus!")
+
+    def uuenda_teenuste_loend(self):
+        self.teenduste_loend.delete(0, tk.END)
+        for teenus in self.teenused:
+            self.teenduste_loend.insert(tk.END, f"{teenus['nimi']} - {teenus['hind']} €")
+
+    def uuenda_arvete_loend(self):
+        self.arvete_loend.delete(0, tk.END)
+        for arve in self.arved:
+            teenused_str = ", ".join([teenus["nimi"] for teenus in arve["teenused"]])
+            self.arvete_loend.insert(tk.END, f"Teenused: {teenused_str}, Summa: {arve['summa']} €")
+
     def salvesta_andmed(self):
-        # Meetod andmete salvestamiseks faili
-        with open("andmed.txt", "w") as f:
-            for teenus_id, teenus in self.teenused.items():
-                f.write("{},{},{}\n".format(teenus_id, teenus['kirjeldus'], teenus['hind']))
-            
-    def loe_andmed(self):
-        # Meetod andmete lugemiseks failist
+        with open("andmed.csv", "w", newline="") as csvfile:
+            fieldnames = ["nimi", "hind"]
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            for teenus in self.teenused:
+                writer.writerow(teenus)
+
+    def lae_andmed(self):
         try:
-            with open("andmed.txt", "r") as f:
-                for line in f:
-                    teenus_id, kirjeldus, hind = line.strip().split(",")
-                    self.teenused[int(teenus_id)] = {"kirjeldus": kirjeldus, "hind": hind}
+            with open("andmed.csv", newline="") as csvfile:
+                reader = csv.DictReader(csvfile)
+                for row in reader:
+                    self.teenused.append(row)
         except FileNotFoundError:
             pass
 
 if __name__ == "__main__":
-    root = tk.Tk()                    # Loome põhiakna
-    rakendus = ArveldusRakendus(root)  # Loome rakenduse eksemplari
-    root.mainloop()                   # Alustame Tkinteri sündmustsükli tööd
+    root = tk.Tk()
+    app = ArveteRakendus(root)
+    root.mainloop()
